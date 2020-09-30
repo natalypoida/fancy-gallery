@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { accessKey, apiUrl } from "./credentials";
 import "./App.css";
 import axios from "axios";
+import Pagination from './components/Pagination';
 
 export default function App() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
+  const [imagesPerPage] = useState(5);
   const loader = useRef(null);
   const handleClick = (newQuery) => {
     if (newQuery !== query) {
@@ -17,8 +19,8 @@ export default function App() {
   };
   const fetchImages = () => {
     axios
-      .get(`${apiUrl}photos/?client_id=${accessKey}&per_page=20&page=${page}`)
-      .then((response) => setImages([...images, ...response.data]));
+      .get(`${apiUrl}photos/?client_id=${accessKey}&per_page=30&page=${page}`)
+      .then((response) => setImages(response.data));
   };
   const handleObserver = (entities) => {
     const target = entities[0];
@@ -28,8 +30,8 @@ export default function App() {
   };
   const searchImages = () => {
     axios
-      .get(`${apiUrl}search/photos/?client_id=${accessKey}&per_page=20&page=${page}&query=${query}`)
-      .then((response) => setImages([...images, ...response.data.results]));
+      .get(`${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
+      .then((response) => setImages(response.data.results));
   };
 
   useEffect(() => {
@@ -39,10 +41,10 @@ export default function App() {
       treshold: 1.0,
     };
 
-    const observer = new IntersectionObserver(handleObserver, options);
-    if (loader.current) {
-      observer.observe(loader.current);
-    }
+   // const observer = new IntersectionObserver(handleObserver, options);
+    //if (loader.current) {
+    //  observer.observe(loader.current);
+    //}
   }, []);
   useEffect(() => {
     if (query) {
@@ -52,7 +54,7 @@ export default function App() {
       fetchImages()
     }
   } , [page, query]);
-
+const paginate = pageNumber => setPage(pageNumber);
   return (
     <div className="container">
       <header className="header">
@@ -64,6 +66,9 @@ export default function App() {
         <button onClick={() => handleClick('sea')}>SEA</button>
         <button onClick={() => handleClick('')}>RANDOM</button>
       </div>
+      < Pagination imagesPerPage={imagesPerPage}
+      totalImages = {images.length}
+      paginate={paginate} />
       <div className="image-grid">
         {images.map((image) => {
           const { id, alt_description, urls, color } = image;
@@ -75,7 +80,8 @@ export default function App() {
           );
         })}
       </div>
-      <div ref={loader}>Loading...</div>
+      
+      
     </div>
   );
 }
