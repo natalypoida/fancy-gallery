@@ -90,7 +90,7 @@ const paginate = pageNumber => setPage(pageNumber);
   <h3>total pages: {totalPages}</h3>
       </div>
       < Pagination imagesPerPage={imagesPerPage}
-      totalImages = {images.length}
+      totalImages = {total}
       paginate={paginate} />
       <div className="image-grid">
         {images.map((image) => {
