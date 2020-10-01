@@ -10,6 +10,8 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [imagesPerPage] = useState(5);
   const loader = useRef(null);
+  const [total, setTotal] = useState('');
+  const [totalPages, setTotalPages] = useState('');
   const handleClick = (newQuery) => {
     if (newQuery !== query) {
       setImages([]);
@@ -28,11 +30,27 @@ export default function App() {
       setPage((page) => page + 1);
     }
   };
-  const searchImages = () => {
+  const searchImages = () => { 
     axios
       .get(`${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
-      .then((response) => setImages(response.data.results));
-  };
+    
+      .then((response) => setImages(response.data.results))
+      
+  }; 
+  const getData = () => { 
+    axios
+      .get(`${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
+    
+      .then((response) => setTotal(response.data.total))
+      
+  }; 
+  const getDataPages = () => { 
+    axios
+      .get(`${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
+    
+      .then((response) => setTotalPages(response.data.total_pages))
+      
+  }; 
 
   useEffect(() => {
     const options = {
@@ -48,7 +66,10 @@ export default function App() {
   }, []);
   useEffect(() => {
     if (query) {
-      searchImages()
+      searchImages();
+      getData();
+      getDataPages()
+      
     }
     else {
       fetchImages()
@@ -65,6 +86,8 @@ const paginate = pageNumber => setPage(pageNumber);
         <button onClick={() => handleClick('dogs')}>DOGS</button>
         <button onClick={() => handleClick('sea')}>SEA</button>
         <button onClick={() => handleClick('')}>RANDOM</button>
+        <h3>total images: {total}</h3> 
+  <h3>total pages: {totalPages}</h3>
       </div>
       < Pagination imagesPerPage={imagesPerPage}
       totalImages = {images.length}
