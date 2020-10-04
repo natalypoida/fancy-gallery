@@ -3,6 +3,7 @@ import { accessKey, apiUrl } from "./credentials";
 import "./App.css";
 import axios from "axios";
 import Pagination from './components/Pagination';
+import PaginateImages from "./components/Pagination";
 
 export default function App() {
   const [images, setImages] = useState([]);
@@ -89,9 +90,9 @@ const paginate = pageNumber => setPage(pageNumber);
         <h3>total images: {total}</h3> 
   <h3>total pages: {totalPages}</h3>
       </div>
-      < Pagination imagesPerPage={imagesPerPage}
+      < PaginateImages imagesPerPage={imagesPerPage}
       totalImages = {total}
-      paginate={paginate} />
+     />
       <div className="image-grid">
         {images.map((image) => {
           const { id, alt_description, urls, color } = image;
