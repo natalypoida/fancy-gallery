@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { accessKey, apiUrl } from "./credentials";
 import "./App.css";
 import axios from "axios";
-import Pagination from './components/Pagination';
-import PaginateImages from "./components/Pagination";
+import ImagesPagination from './components/Pagination';
+//import PaginationItem from '@material-ui/lab/PaginationItem';
 
 export default function App() {
   const [images, setImages] = useState([]);
@@ -77,6 +77,8 @@ export default function App() {
     }
   } , [page, query]);
 const paginate = pageNumber => setPage(pageNumber);
+//const handleChange = (event, value) => {
+  //setPage(value);}
   return (
     <div className="container">
       <header className="header">
@@ -90,8 +92,14 @@ const paginate = pageNumber => setPage(pageNumber);
         <h3>total images: {total}</h3> 
   <h3>total pages: {totalPages}</h3>
       </div>
-      < PaginateImages imagesPerPage={imagesPerPage}
+      < ImagesPagination
+      imagesPerPage={imagesPerPage}
       totalImages = {total}
+      //totalPages = {totalPages}
+      
+     
+      //onChange={handleChange}
+     paginate={paginate}
      />
       <div className="image-grid">
         {images.map((image) => {
