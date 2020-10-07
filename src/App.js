@@ -1,100 +1,125 @@
-import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
-import { ACCESS_KEY, API_URL } from "./credentials";
+import React, { useState, useEffect, useRef } from "react";
+import { accessKey, apiUrl } from "./credentials";
 import "./App.css";
+import axios from "axios";
+import ImagesPagination from "./components/Pagination";
 
-function App() {
+export default function App() {
   const [images, setImages] = useState([]);
-  const [page, setPages] = useState(1);
-  const [query, setQuery] = useState();
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
   const loader = useRef(null);
-
+  const [total, setTotal] = useState("");
+  const [totalPages, setTotalPages] = useState("");
+  const handleClick = (newQuery) => {
+    if (newQuery !== query) {
+      setImages([]);
+      setPage(1);
+    }
+    setQuery(newQuery);
+  };
   const fetchImages = () => {
     axios
-      .get(
-        `${API_URL}/photos/?page=${page}&per_page=20&client_id=${ACCESS_KEY}`
-      )
-      .then((response) => setImages([...images, ...response.data]));
+      .get(`${apiUrl}photos/?client_id=${accessKey}&per_page=30&page=${page}`)
+      .then((response) => setImages(response.data));
+  };
+  const handleObserver = (entities) => {
+    const target = entities[0];
+    if (target.intersectionRatio > 0) {
+      setPage((page) => page + 1);
+    }
   };
 
   const searchImages = () => {
     axios
       .get(
-        `${API_URL}/search/photos/?query=${query}&page=${page}&per_page=20`,
-        {
-          headers: { Authorization: `Client-ID ${ACCESS_KEY}` },
-        }
+        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
+      .then((response) => setImages(response.data.results));
+  };
+  const getData = () => {
+    axios
+      .get(
+        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`
       )
-      .then((response) => setImages([...images, ...response.data.results]));
+      .then((response) => setTotal(response.data.total));
   };
-
-  const handleClick = (newQuery) => {
-    if (newQuery !== query) {
-      setImages([]);
-      setPages(1);
-    }
-    setQuery(newQuery);
-  };
-
-  const handleObserver = (entities) => {
-    const target = entities[0];
-
-    if (target.intersectionRatio > 0) {
-      setPages((page) => page + 1);
-    }
+  const getDataPages = () => {
+    axios
+      .get(
+        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`
+      )
+      .then((response) => setTotalPages(response.data.total_pages));
   };
 
   useEffect(() => {
     const options = {
       root: null,
       rootMargin: "0px",
-      treshold: 1,
+      treshold: 1.0,
     };
 
-    const observer = new IntersectionObserver(handleObserver, options);
-
-    if (loader.current) {
-      observer.observe(loader.current);
-    }
+    // const observer = new IntersectionObserver(handleObserver, options);
+    //if (loader.current) {
+    //  observer.observe(loader.current);
+    //}
   }, []);
-
   useEffect(() => {
     if (query) {
       searchImages();
+      getData();
+      getDataPages();
     } else {
       fetchImages();
     }
   }, [page, query]);
-
+  const paginate = (pageNumber) => setPage(pageNumber);
+  const DisplayTotal = () => {
+    if (query) {
+      return (
+        <>
+          <h3 className="text-info">total images: {total}</h3>
+          <h3 className="text-info">total pages: {totalPages}</h3>
+        </>
+      );
+    } else {
+      return ''    
+    }
+  };
   return (
     <div className="container">
       <header className="header">
-        <h1>Fancy Gallery</h1>
+        <h1 className="text-info">Fancy Gallery</h1>
       </header>
       <div className="tags">
-        <button onClick={() => handleClick("cats")}>Cats</button>
-        <button onClick={() => handleClick("dogs")}>Dogs</button>
-        <button onClick={() => handleClick("coffee")}>Coffee</button>
-        <button onClick={() => handleClick("react")}>React</button>
-        <button onClick={() => handleClick()}>Random</button>
+        <button type="button" className="btn btn-outline-info" onClick={() => handleClick("cats")}>CATS</button>
+        <button type="button" className="btn btn-outline-info" onClick={() => handleClick("dogs")}>DOGS</button>
+        <button type="button" className="btn btn-outline-info" onClick={() => handleClick("sea")}>SEA</button>
+        <button type="button" className="btn btn-outline-info" onClick={() => handleClick("")}>RANDOM</button>
+        <DisplayTotal />
+      </div>
+      <div className="pagination">
+        <ImagesPagination
+          totalImages={total}
+          totalPages={totalPages}
+          totalPages={totalPages}
+          imagesPerPage={30}
+          paginate={paginate}
+        />
       </div>
       <div className="image-grid">
         {images.map((image) => {
-          const { id, color, urls, alt_description } = image;
+          const { id, alt_description, urls, color } = image;
           return (
-            <div
-              className="image-item"
-              key={id}
-              style={{ backgroundColor: color }}
-            >
-              <img src={urls.small} alt={alt_description} />
+            <div className="image-item" key={id}>
+              <img
+                src={urls.small}
+                alt={alt_description}
+                style={{ backgroundColor: color }}
+              />
             </div>
           );
         })}
       </div>
-      <div ref={loader}>Loading...</div>
     </div>
   );
 }
-
-export default App;

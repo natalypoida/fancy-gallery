@@ -1,17 +1,20 @@
 .container {
   text-align: center;
 }
-
 .image-grid {
   display: grid;
   margin: 10px;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-}
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 
-.image-item:nth-child(5n) {
+}
+.btn {
+  margin-left: 1rem;
+}
+/*.image-item:nth-child(5n) {
   grid-column-end: span 2;
 }
+*/
 img {
   display: flex;
   width: 100%;

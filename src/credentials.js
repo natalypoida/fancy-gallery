@@ -1,2 +1,2 @@
-export const API_URL = "https://api.unsplash.com";
-export const ACCESS_KEY = "your Access Key";
+export const accessKey = 'BqdmRhAgmNZbDe63k5HQIoQF-5geZoGp7-auPx9UaKE';
+export const apiUrl = 'https://api.unsplash.com/';
