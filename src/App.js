@@ -82,12 +82,7 @@ export default function App() {
         </>
       );
     } else {
-      return (
-        <>
-          <h3 className="text-info">total images: uncountable </h3>
-          <h3 className="text-info">total pages: incomputable </h3>
-        </>
-      )
+      return ''    
     }
   };
   return (
