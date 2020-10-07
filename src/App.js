@@ -2,23 +2,21 @@ import React, { useState, useEffect, useRef } from "react";
 import { accessKey, apiUrl } from "./credentials";
 import "./App.css";
 import axios from "axios";
-import ImagesPagination from './components/Pagination';
-//import PaginationItem from '@material-ui/lab/PaginationItem';
+import ImagesPagination from "./components/Pagination";
 
 export default function App() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState('');
-  const [imagesPerPage] = useState(5);
+  const [query, setQuery] = useState("");
   const loader = useRef(null);
-  const [total, setTotal] = useState('');
-  const [totalPages, setTotalPages] = useState('');
+  const [total, setTotal] = useState("");
+  const [totalPages, setTotalPages] = useState("");
   const handleClick = (newQuery) => {
     if (newQuery !== query) {
       setImages([]);
-      setPage(1)
+      setPage(1);
     }
-    setQuery(newQuery)
+    setQuery(newQuery);
   };
   const fetchImages = () => {
     axios
@@ -31,27 +29,27 @@ export default function App() {
       setPage((page) => page + 1);
     }
   };
-  const searchImages = () => { 
+
+  const searchImages = () => {
     axios
-      .get(`${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
-    
-      .then((response) => setImages(response.data.results))
-      
-  }; 
-  const getData = () => { 
+      .get(
+        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
+      .then((response) => setImages(response.data.results));
+  };
+  const getData = () => {
     axios
-      .get(`${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
-    
-      .then((response) => setTotal(response.data.total))
-      
-  }; 
-  const getDataPages = () => { 
+      .get(
+        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`
+      )
+      .then((response) => setTotal(response.data.total));
+  };
+  const getDataPages = () => {
     axios
-      .get(`${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
-    
-      .then((response) => setTotalPages(response.data.total_pages))
-      
-  }; 
+      .get(
+        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`
+      )
+      .then((response) => setTotalPages(response.data.total_pages));
+  };
 
   useEffect(() => {
     const options = {
@@ -60,7 +58,7 @@ export default function App() {
       treshold: 1.0,
     };
 
-   // const observer = new IntersectionObserver(handleObserver, options);
+    // const observer = new IntersectionObserver(handleObserver, options);
     //if (loader.current) {
     //  observer.observe(loader.current);
     //}
@@ -69,51 +67,59 @@ export default function App() {
     if (query) {
       searchImages();
       getData();
-      getDataPages()
-      
+      getDataPages();
+    } else {
+      fetchImages();
     }
-    else {
-      fetchImages()
+  }, [page, query]);
+  const paginate = (pageNumber) => setPage(pageNumber);
+  const displayTotal = () => {
+    if (query) {
+      return (
+        <>
+          <h3>total images: {total}</h3>
+          <h3>total pages: {totalPages}</h3>
+        </>
+      );
+    } else {
+      return null;
     }
-  } , [page, query]);
-const paginate = pageNumber => setPage(pageNumber);
-//const handleChange = (event, value) => {
-  //setPage(value);}
+  };
   return (
     <div className="container">
       <header className="header">
         <h1>Fancy Gallery</h1>
       </header>
       <div className="tags">
-        <button onClick={() => handleClick('cats')}>CATS</button>
-        <button onClick={() => handleClick('dogs')}>DOGS</button>
-        <button onClick={() => handleClick('sea')}>SEA</button>
-        <button onClick={() => handleClick('')}>RANDOM</button>
-        <h3>total images: {total}</h3> 
-  <h3>total pages: {totalPages}</h3>
+        <button onClick={() => handleClick("cats")}>CATS</button>
+        <button onClick={() => handleClick("dogs")}>DOGS</button>
+        <button onClick={() => handleClick("sea")}>SEA</button>
+        <button onClick={() => handleClick("")}>RANDOM</button>
+        <displayTotal />
       </div>
-      < ImagesPagination
-      imagesPerPage={imagesPerPage}
-      totalImages = {total}
-      //totalPages = {totalPages}
-      
-     
-      //onChange={handleChange}
-     paginate={paginate}
-     />
+      <div className="pagination">
+        <ImagesPagination
+          totalImages={total}
+          totalPages={totalPages}
+          totalPages={totalPages}
+          imagesPerPage={30}
+          paginate={paginate}
+        />
+      </div>
       <div className="image-grid">
         {images.map((image) => {
           const { id, alt_description, urls, color } = image;
-
           return (
             <div className="image-item" key={id}>
-              <img src={urls.small} alt={alt_description} style={{backgroundColor:color}} />
+              <img
+                src={urls.small}
+                alt={alt_description}
+                style={{ backgroundColor: color }}
+              />
             </div>
           );
         })}
       </div>
-      
-      
     </div>
   );
 }
