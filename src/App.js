@@ -73,29 +73,34 @@ export default function App() {
     }
   }, [page, query]);
   const paginate = (pageNumber) => setPage(pageNumber);
-  const displayTotal = () => {
+  const DisplayTotal = () => {
     if (query) {
       return (
         <>
-          <h3>total images: {total}</h3>
-          <h3>total pages: {totalPages}</h3>
+          <h3 className="text-info">total images: {total}</h3>
+          <h3 className="text-info">total pages: {totalPages}</h3>
         </>
       );
     } else {
-      return null;
+      return (
+        <>
+          <h3 className="text-info">total images: uncountable </h3>
+          <h3 className="text-info">total pages: incomputable </h3>
+        </>
+      )
     }
   };
   return (
     <div className="container">
       <header className="header">
-        <h1>Fancy Gallery</h1>
+        <h1 className="text-info">Fancy Gallery</h1>
       </header>
       <div className="tags">
-        <button onClick={() => handleClick("cats")}>CATS</button>
-        <button onClick={() => handleClick("dogs")}>DOGS</button>
-        <button onClick={() => handleClick("sea")}>SEA</button>
-        <button onClick={() => handleClick("")}>RANDOM</button>
-        <displayTotal />
+        <button type="button" className="btn btn-outline-info" onClick={() => handleClick("cats")}>CATS</button>
+        <button type="button" className="btn btn-outline-info" onClick={() => handleClick("dogs")}>DOGS</button>
+        <button type="button" className="btn btn-outline-info" onClick={() => handleClick("sea")}>SEA</button>
+        <button type="button" className="btn btn-outline-info" onClick={() => handleClick("")}>RANDOM</button>
+        <DisplayTotal />
       </div>
       <div className="pagination">
         <ImagesPagination

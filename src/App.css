@@ -8,7 +8,9 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 
 }
-
+.btn {
+  margin-left: 1rem;
+}
 /*.image-item:nth-child(5n) {
   grid-column-end: span 2;
 }
