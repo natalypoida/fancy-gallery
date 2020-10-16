@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { accessKey, apiUrl } from "./credentials";
+import { ACCESS_KEY,  API_URL } from "./credentials";
 import "./App.css";
 import axios from "axios";
 import ImagesPagination from "./components/Pagination";
@@ -20,7 +20,8 @@ export default function App() {
   };
   const fetchImages = () => {
     axios
-      .get(`${apiUrl}photos/?client_id=${accessKey}&per_page=30&page=${page}`)
+      .get(`${ API_URL}photos/?client_id=${ACCESS_KEY}&per_page=30&page=${page}`)
+      
       .then((response) => setImages(response.data));
   };
   const handleObserver = (entities) => {
@@ -33,36 +34,29 @@ export default function App() {
   const searchImages = () => {
     axios
       .get(
-        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`)
+        `${ API_URL}search/photos/?client_id=${ACCESS_KEY}&per_page=30&page=${page}&query=${query}`)
       .then((response) => setImages(response.data.results));
+      
   };
   const getData = () => {
     axios
       .get(
-        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`
+        `${ API_URL}search/photos/?client_id=${ACCESS_KEY}&per_page=30&page=${page}&query=${query}`
       )
       .then((response) => setTotal(response.data.total));
   };
   const getDataPages = () => {
     axios
       .get(
-        `${apiUrl}search/photos/?client_id=${accessKey}&per_page=30&page=${page}&query=${query}`
+        `${ API_URL}search/photos/?client_id=${ACCESS_KEY}&per_page=30&page=${page}&query=${query}`
       )
       .then((response) => setTotalPages(response.data.total_pages));
   };
 
-  useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: "0px",
-      treshold: 1.0,
-    };
+  
 
-    // const observer = new IntersectionObserver(handleObserver, options);
-    //if (loader.current) {
-    //  observer.observe(loader.current);
-    //}
-  }, []);
+   
+  
   useEffect(() => {
     if (query) {
       searchImages();
